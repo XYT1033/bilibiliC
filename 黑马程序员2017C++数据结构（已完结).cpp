@@ -232,56 +232,56 @@ int main(void){
 }
 
 
--- 6 
+-- 6-9  
 -- LinkList.h 
-#pragma once
 #ifndef LINKLIST_H
 #define LINKLIST_H
 
 #include<stdlib.h>
 #include<stdio.h>
 
-//链表小结点
+//链表结点
 typedef struct LINKNODE {
+	void* data;  //指向任何类型的数据
 	struct LINKNODE* next;
 }LinkNode;
 
-//链表结点
+//链表结构体
 typedef struct LINKLIST {
-	LinkNode head;
+	LinkNode* head;
 	int size;
+	//需要容量吗？没有容量的概念
 }LinkList;
 
-//遍历函数指针
-typedef void(*PRINTNODE)(LinkNode*);
-//比较函数指针
-typedef int(*COMPARENODE)(LinkNode*, LinkNode*);
+//打印函数指针
+typedef void(*PRINTLINKNODE)(void*);
 
 //初始化链表
 LinkList* Init_LinkList();
-//插入
-void Insert_LinkList(LinkList* list, int pos, LinkNode* data);
-//删除
-void Remove_LinkList(LinkList* list, int pos);
-//查找
-int Find_LinkList(LinkList* list, LinkNode* data, COMPARENODE compare);
-//返回链表大小
+//指定位置插入
+void Insert_LinkList(LinkList* list, int pos, void* data);
+//删除指定位置的值
+void RemoveByPos_LinkList(LinkList* list, int pos);
+//获得链表的长度
 int Size_LinkList(LinkList* list);
-//打印
-void Print_LinkList(LinkList* list, PRINTNODE print);
+//查找
+int Find_LinkList(LinkList* list, void* data);
+//返回第一个结点
+void* Front_LinkList(LinkList* list);
+//打印链表结点
+void Print_LinkList(LinkList* list, PRINTLINKNODE print);
 //释放链表内存
 void FreeSpace_LinkList(LinkList* list);
 
 
 #endif
 
-
--- 
 -- LinkList.c
- #include"LinkList.h"
+ 
+#include"LinkList.h"
 
 //初始化链表
-LinkList* Init_LinkList(){
+LinkList* Init_LinkList() {
 
 	LinkList* list = (LinkList*)malloc(sizeof(LinkList));
 	list->size = 0;
@@ -294,17 +294,17 @@ LinkList* Init_LinkList(){
 	return list;
 }
 //指定位置插入
-void Insert_LinkList(LinkList* list, int pos, void* data){
+void Insert_LinkList(LinkList* list, int pos, void* data) {
 
-	if (list == NULL){
+	if (list == NULL) {
 		return;
 	}
-	if (data == NULL){
+	if (data == NULL) {
 		return;
 	}
 
 	//友好的处理，pos越界 
-	if (pos < 0 || pos > list->size){
+	if (pos < 0 || pos > list->size) {
 		pos = list->size;
 	}
 
@@ -316,7 +316,7 @@ void Insert_LinkList(LinkList* list, int pos, void* data){
 	//找结点
 	//辅助指针变量
 	LinkNode* pCurrent = list->head;
-	for (int i = 0; i < pos;i++){
+	for (int i = 0; i < pos; i++) {
 		pCurrent = pCurrent->next;
 	}
 
@@ -328,18 +328,18 @@ void Insert_LinkList(LinkList* list, int pos, void* data){
 
 }
 //删除指定位置的值
-void RemoveByPos_LinkList(LinkList* list, int pos){
-	if (list == NULL){
+void RemoveByPos_LinkList(LinkList* list, int pos) {
+	if (list == NULL) {
 		return;
 	}
 
-	if (pos < 0 || pos >= list->size){
+	if (pos < 0 || pos >= list->size) {
 		return;
 	}
 
 	//查找删除结点的前一个结点
 	LinkNode* pCurrent = list->head;
-	for (int i = 0; i < pos;i ++){
+	for (int i = 0; i < pos; i++) {
 		pCurrent = pCurrent->next;
 	}
 
@@ -352,24 +352,24 @@ void RemoveByPos_LinkList(LinkList* list, int pos){
 	list->size--;
 }
 //获得链表的长度
-int Size_LinkList(LinkList* list){
+int Size_LinkList(LinkList* list) {
 	return list->size;
 }
 //查找
-int Find_LinkList(LinkList* list, void* data){
-	if (list == NULL){
+int Find_LinkList(LinkList* list, void* data) {
+	if (list == NULL) {
 		return -1;
 	}
 
-	if (data == NULL){
+	if (data == NULL) {
 		return -1;
 	}
 
 	//遍历查找
 	LinkNode* pCurrent = list->head->next;
 	int i = 0;
-	while (pCurrent != NULL){
-		if (pCurrent->data == data){
+	while (pCurrent != NULL) {
+		if (pCurrent->data == data) {
 			break;
 		}
 		i++;
@@ -379,32 +379,32 @@ int Find_LinkList(LinkList* list, void* data){
 	return i;
 }
 //返回第一个结点
-void* Front_LinkList(LinkList* list){
+void* Front_LinkList(LinkList* list) {
 	return list->head->next->data;
 }
 //打印链表结点
-void Print_LinkList(LinkList* list, PRINTLINKNODE print){
-	if (list == NULL){
+void Print_LinkList(LinkList* list, PRINTLINKNODE print) {
+	if (list == NULL) {
 		return;
 	}
 	//辅助指针变量
 	LinkNode* pCurrent = list->head->next;
-	while (pCurrent != NULL){
+	while (pCurrent != NULL) {
 		print(pCurrent->data);
 		pCurrent = pCurrent->next;
 	}
 
 }
 //释放链表内存
-void FreeSpace_LinkList(LinkList* list){
+void FreeSpace_LinkList(LinkList* list) {
 
-	if (list == NULL){
+	if (list == NULL) {
 		return;
 	}
 
 	//辅助指针变量
 	LinkNode* pCurrent = list->head;
-	while (pCurrent != NULL){
+	while (pCurrent != NULL) {
 		//缓存下一个结点
 		LinkNode* pNext = pCurrent->next;
 		free(pCurrent);
@@ -417,9 +417,69 @@ void FreeSpace_LinkList(LinkList* list){
 
 }
 
-
 -- 
 
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "LinkList.h"
 
+
+//自定义数据类型
+typedef struct PERSON {
+	char name[64];
+	int age;
+	int score;
+}Person;
+
+
+//打印函数
+void MyPrint(void* data) {
+	Person* p = (Person*)data;
+	printf("Name:%s Age:%d Score:%d\n", p->name, p->age, p->score);
+}
+
+int main(void) {
+
+
+	//创建链表
+	LinkList* list = Init_LinkList();
+
+	//创建数据
+	Person p1 = { "aaa", 18, 100 };
+	Person p2 = { "bbb", 19, 99 };
+	Person p3 = { "ccc", 20, 101 };
+	Person p4 = { "ddd", 17, 97 };
+	Person p5 = { "eee", 16, 59 };
+
+	//数据插入链表
+	Insert_LinkList(list, 0, &p1);
+	Insert_LinkList(list, 0, &p2);
+	Insert_LinkList(list, 0, &p3);
+	Insert_LinkList(list, 0, &p4);
+	Insert_LinkList(list, 0, &p5);
+
+	//打印
+	Print_LinkList(list, MyPrint);
+
+	//删除3
+	RemoveByPos_LinkList(list, 3);
+
+	//打印
+	printf("---------------\n");
+	Print_LinkList(list, MyPrint);
+
+	//返回第一个结点
+	printf("-----查找结果------------\n");
+	Person* ret = (Person*)Front_LinkList(list);
+	printf("Name:%s Age:%d Score:%d\n", ret->name, ret->age, ret->score);
+
+	//销毁链表
+	FreeSpace_LinkList(list);
+
+	system("pause");
+	return 0;
+}
 
  
