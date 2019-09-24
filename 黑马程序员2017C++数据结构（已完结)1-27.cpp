@@ -1,7 +1,6 @@
 
--- 3-5
-
 -- DynamicArray.h
+
 #ifndef DYNAMIC_ARRAY_H
 #define DYNAMIC_ARRAY_H
 
@@ -185,7 +184,8 @@ int At_Array(Dynamic_Array* arr, int pos){
 }
 
 
--- 
+--  源.cpp
+
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
@@ -232,8 +232,8 @@ int main(void){
 }
 
 
--- 6-9  
 -- LinkList.h 
+
 #ifndef LINKLIST_H
 #define LINKLIST_H
 
@@ -417,7 +417,7 @@ void FreeSpace_LinkList(LinkList* list) {
 
 }
 
--- 
+--  源.cpp
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
@@ -484,9 +484,8 @@ int main(void) {
 
 
 
- -- 15 
-
 --  CircleLinkList.h
+
 #ifndef CIRCLELINKLIST
 #define CIRCLELINKLIST
 
@@ -539,6 +538,7 @@ void FreeSpace_CircleLinkList(CircleLinkList* clist);
 
 
 -- CircleLinkList.cpp
+
 #include"CircleLinkList.h"
 
 //初始化函数
@@ -731,11 +731,11 @@ int main(void) {
 
 	//创建数据
 	Person p1, p2, p3, p4, p5;
-	strcpy(p1.name, "aaa");
-	strcpy(p2.name, "bbb");
-	strcpy(p3.name, "ccc");
-	strcpy(p4.name, "ddd");
-	strcpy(p5.name, "eee");
+	strcpy(p1.name, "p1");
+	strcpy(p2.name, "p2");
+	strcpy(p3.name, "p3");
+	strcpy(p4.name, "p4");
+	strcpy(p5.name, "p5");
 
 	p1.age = 10;
 	p2.age = 20;
