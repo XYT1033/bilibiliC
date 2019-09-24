@@ -231,7 +231,6 @@ int main(void){
 	return 0;
 }
 
-
 -- LinkList.h 
 
 #ifndef LINKLIST_H
@@ -483,259 +482,206 @@ int main(void) {
 }
 
 
+--  LinkList.h
 
---  CircleLinkList.h
+#ifndef LINKLIST_H
+#define LINKLIST_H
 
-#ifndef CIRCLELINKLIST
-#define CIRCLELINKLIST
-
-#include<stdio.h>
 #include<stdlib.h>
+#include<stdio.h>
 
-//链表的小结点
-typedef struct CIRCLELINKNODE {
-	struct CIRCLELINKNODE* next;
-}CircleLinkNode;
+//链表小结点
+typedef struct LINKNODE{
+	struct LINKNODE* next;
+}LinkNode;
 
-//链表结构体
-typedef struct CIRCLELINKLIST {
-	CircleLinkNode head;
+//链表结点
+typedef struct LINKLIST{
+	LinkNode head;
 	int size;
-}CircleLinkList;
+}LinkList;
 
-//编写针对链表结构体操作的API函数
+//遍历函数指针
+typedef void(*PRINTNODE)(LinkNode*);
+//比较函数指针
+typedef int(*COMPARENODE)(LinkNode*, LinkNode*);
 
-#define CIRCLELINKLIST_TRUE 1
-#define CIRCLELINKLIST_FALSE 0
-
-//比较回调
-typedef int(*COMPARENODE)(CircleLinkNode*, CircleLinkNode*);
-//打印回调
-typedef void(*PRINTNODE)(CircleLinkNode*);
-
-//初始化函数
-CircleLinkList* Init_CircleLinkList();
-//插入函数
-void Insert_CircleLinkList(CircleLinkList* clist, int pos, CircleLinkNode* data);
-//获得第一个元素
-CircleLinkNode* Front_CircleLinkList(CircleLinkList* clist);
-//根据位置删除
-void RemoveByPos_CircleLinkList(CircleLinkList* clist, int pos);
-//根据值去删除
-void RemoveByValue_CircleLinkList(CircleLinkList* clist, CircleLinkNode* data, COMPARENODE compare);
-//获得链表的长度
-int Size_CircleLinkList(CircleLinkList* clist);
-//判断是否为空
-int IsEmpty_CircleLinkList(CircleLinkList* clist);
+//初始化链表
+LinkList* Init_LinkList();
+//插入
+void Insert_LinkList(LinkList* list, int pos, LinkNode* data);
+//删除
+void Remove_LinkList(LinkList* list, int pos);
 //查找
-int Find_CircleLinkList(CircleLinkList* clist, CircleLinkNode* data, COMPARENODE compare);
-//打印节点
-void Print_CircleLinkList(CircleLinkList* clist, PRINTNODE print);
-//释放内存
-void FreeSpace_CircleLinkList(CircleLinkList* clist);
+int Find_LinkList(LinkList* list, LinkNode* data, COMPARENODE compare);
+//返回链表大小
+int Size_LinkList(LinkList* list);
+//打印
+void Print_LinkList(LinkList* list, PRINTNODE print);
+//释放链表内存
+void FreeSpace_LinkList(LinkList* list);
+
 
 #endif
 
+--  LinkList.c
 
--- CircleLinkList.cpp
+#include"LinkList.h"
 
-#include"CircleLinkList.h"
+//初始化链表
+LinkList* Init_LinkList(){
 
-//初始化函数
-CircleLinkList* Init_CircleLinkList() {
-
-	CircleLinkList* clist = (CircleLinkList*)malloc(sizeof(CircleLinkList));
-	clist->head.next = &(clist->head);
-	clist->size = 0;
-
-	return clist;
+	LinkList* list = (LinkList*)malloc(sizeof(LinkList));
+	list->head.next = NULL;
+	list->size = 0;
+	return list;
 }
+//插入
+void Insert_LinkList(LinkList* list, int pos, LinkNode* data){
 
-//插入函数
-void Insert_CircleLinkList(CircleLinkList* clist, int pos, CircleLinkNode* data) {
-
-	if (clist == NULL) {
+	if (list == NULL){
 		return;
 	}
 
-	if (data == NULL) {
+	if (data == NULL){
 		return;
 	}
 
-	if (pos <0 || pos > clist->size) {
-		pos = clist->size;
+	if (pos < 0 || pos > list->size){
+		pos = list->size;
 	}
 
-	//根据位置查找结点
-	//辅助指针变量
-	CircleLinkNode* pCurrent = &(clist->head);
-	for (int i = 0; i < pos; i++) {
+	//查找插入位置
+	LinkNode* pCurrent = &(list->head);
+	for (int i = 0; i < pos;i++){
 		pCurrent = pCurrent->next;
 	}
 
-	//新数据入链表
+	//插入新节点
 	data->next = pCurrent->next;
 	pCurrent->next = data;
 
-	clist->size++;
+	list->size++;
 }
-//获得第一个元素
-CircleLinkNode* Front_CircleLinkList(CircleLinkList* clist) {
-	return clist->head.next;
-}
-//根据位置删除
-void RemoveByPos_CircleLinkList(CircleLinkList* clist, int pos) {
-
-	if (clist == NULL) {
+//删除
+void Remove_LinkList(LinkList* list, int pos){
+	
+	if (list == NULL){
 		return;
 	}
 
-	if (pos < 0 || pos >= clist->size) {
+	if (pos < 0 || pos >= list->size){
 		return;
 	}
-
-	//根据pos找结点
+	
 	//辅助指针变量
-	CircleLinkNode* pCurrent = &(clist->head);
-	for (int i = 0; i < pos; i++) {
+	LinkNode* pCurrent = &(list->head);
+	for (int i = 0; i < pos;i++){
 		pCurrent = pCurrent->next;
 	}
 
-	//缓存当前结点的下一个结点
-	CircleLinkNode* pNext = pCurrent->next;
-	pCurrent->next = pNext->next;
+	//删除结点
+	pCurrent->next = pCurrent->next->next;
 
-	clist->size--;
-}
-//根据值去删除
-void RemoveByValue_CircleLinkList(CircleLinkList* clist, CircleLinkNode* data, COMPARENODE compare) {
-
-	if (clist == NULL) {
-		return;
-	}
-
-	if (data == NULL) {
-		return;
-	}
-
-	//这个是循环链表
-	CircleLinkNode* pPrev = &(clist->head);
-	CircleLinkNode* pCurrent = pPrev->next;
-	int i = 0;
-	for (i = 0; i < clist->size; i++) {
-		if (compare(pCurrent, data) == CIRCLELINKLIST_TRUE) {
-			pPrev->next = pCurrent->next;
-			clist->size--;
-			break;
-		}
-		pPrev = pCurrent;
-		pCurrent = pPrev->next;
-	}
-}
-//获得链表的长度
-int Size_CircleLinkList(CircleLinkList* clist) {
-	return clist->size;
-}
-//判断是否为空
-int IsEmpty_CircleLinkList(CircleLinkList* clist) {
-	if (clist->size == 0) {
-		return CIRCLELINKLIST_TRUE;
-	}
-	return CIRCLELINKLIST_FALSE;
+	list->size--;
 }
 //查找
-int Find_CircleLinkList(CircleLinkList* clist, CircleLinkNode* data, COMPARENODE compare) {
+int Find_LinkList(LinkList* list, LinkNode* data, COMPARENODE compare){
 
-	if (clist == NULL) {
+	if (list == NULL){
 		return -1;
 	}
 
-	if (data == NULL) {
+	if (data == NULL){
 		return -1;
 	}
 
-	CircleLinkNode* pCurrent = clist->head.next;
+	//赋值指针变量
+	LinkNode* pCurrent = list->head.next;
+	int index = 0;
 	int flag = -1;
-	for (int i = 0; i < clist->size; i++) {
-		if (compare(pCurrent, data) == CIRCLELINKLIST_TRUE) {
-			flag = i;
+	while (pCurrent != NULL	){
+		if (compare(pCurrent, data) == 0){
+			flag = index;
 			break;
 		}
 		pCurrent = pCurrent->next;
+		index++;
 	}
 
 	return flag;
 }
-//打印节点
-void Print_CircleLinkList(CircleLinkList* clist, PRINTNODE print) {
+//返回链表大小
+int Size_LinkList(LinkList* list){
+	return 0;
+}
+//打印
+void Print_LinkList(LinkList* list, PRINTNODE print){
 
-	if (clist == NULL) {
+	if (list == NULL){
 		return;
 	}
 
-	//辅助指针变量
-	CircleLinkNode* pCurrent = clist->head.next;
-	for (int i = 0; i < clist->size; i++) {
-		if (pCurrent == &(clist->head)) {
-			pCurrent = pCurrent->next;
-			printf("------------------\n");
-		}
+	//辅助指针
+	LinkNode* pCurrent = list->head.next;
+	while (pCurrent != NULL){
 		print(pCurrent);
 		pCurrent = pCurrent->next;
 	}
+	
 
 }
-//释放内存
-void FreeSpace_CircleLinkList(CircleLinkList* clist) {
+//释放链表内存
+void FreeSpace_LinkList(LinkList* list){
 
-	if (clist == NULL) {
+	if (list == NULL){
 		return;
 	}
-	free(clist);
+
+	free(list);
 }
 
--- 源.cpp
+-- 源.c 
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include"CircleLinkList.h"
+#include "LinkList.h"
 
-typedef struct PERSON {
-	CircleLinkNode node;
+typedef struct PERSON{
+	LinkNode node;
 	char name[64];
 	int age;
-	int score;
 }Person;
 
-void MyPrint(CircleLinkNode* data) {
-	Person* p = (Person*)data;
-	printf("Name:%s Age:%d Score:%d\n", p->name, p->age, p->score);
+void MyPrint(LinkNode* data){
+	Person*  p = (Person*)data;
+	printf("Name:%s Age:%d\n",p->name,p->age);
 }
 
-int MyCompare(CircleLinkNode* data1, CircleLinkNode* data2) {
-	Person* p1 = (Person*)data1;
-	Person* p2 = (Person*)data2;
+int MyCompare(LinkNode* node1, LinkNode* node2){
+	Person* p1 = (Person*)node1;
+	Person* p2 = (Person*)node2;
 
-	if (strcmp(p1->name, p2->name) == 0 && p1->age == p2->age&& p1->score == p2->score) {
-		return CIRCLELINKLIST_TRUE;
+	if (strcmp(p1->name,p2->name) == 0 && p1->age == p2->age){
+		return 0;
 	}
-	return CIRCLELINKLIST_FALSE;
+	return -1;
 }
 
-int main(void) {
-
-	//创建循环链表
-	CircleLinkList* clist = Init_CircleLinkList();
+int main(void){
+	
+	//创建链表
+	LinkList* list = Init_LinkList();
 
 	//创建数据
 	Person p1, p2, p3, p4, p5;
-	strcpy(p1.name, "p1");
-	strcpy(p2.name, "p2");
-	strcpy(p3.name, "p3");
-	strcpy(p4.name, "p4");
-	strcpy(p5.name, "p5");
+	strcpy(p1.name, "aaa");
+	strcpy(p2.name, "bbb");
+	strcpy(p3.name, "ccc");
+	strcpy(p4.name, "ddd");
+	strcpy(p5.name, "eee");
 
 	p1.age = 10;
 	p2.age = 20;
@@ -743,56 +689,37 @@ int main(void) {
 	p4.age = 40;
 	p5.age = 50;
 
-	p1.score = 50;
-	p2.score = 50;
-	p3.score = 60;
-	p4.score = 65;
-	p5.score = 70;
-
-
-	//数据入链表
-	Insert_CircleLinkList(clist, 100, (CircleLinkNode*)&p1);
-	Insert_CircleLinkList(clist, 100, (CircleLinkNode*)&p2);
-	Insert_CircleLinkList(clist, 100, (CircleLinkNode*)&p3);
-	Insert_CircleLinkList(clist, 100, (CircleLinkNode*)&p4);
-	Insert_CircleLinkList(clist, 100, (CircleLinkNode*)&p5);
+	//将结点插入链表
+	Insert_LinkList(list, 0, (LinkNode*)&p1);
+	Insert_LinkList(list, 0, (LinkNode*)&p2);
+	Insert_LinkList(list, 0, (LinkNode*)&p3);
+	Insert_LinkList(list, 0, (LinkNode*)&p4);
+	Insert_LinkList(list, 0, (LinkNode*)&p5);
 
 	//打印
-	Print_CircleLinkList(clist, MyPrint);
+	Print_LinkList(list, MyPrint);
 
-
-	Person pDel;
-	strcpy(pDel.name, "ddd");
-	pDel.age = 40;
-	pDel.score = 65;
-
-	//根据值删除
-	RemoveByValue_CircleLinkList(clist, (CircleLinkNode*)&pDel, MyCompare);
-
+	//删除结点
+	Remove_LinkList(list, 2);
 
 	//打印
-	printf("--------------\n");
-	Print_CircleLinkList(clist, MyPrint);
+	printf("---------------\n");
+	Print_LinkList(list, MyPrint);
 
-	//释放内存
-	FreeSpace_CircleLinkList(clist);
+	//查找
+	Person findP;
+	strcpy(findP.name, "bbb");
+	findP.age = 20;
+	int pos = Find_LinkList(list, (LinkNode*)&findP, MyCompare);
+	printf("位置:%d\n",pos);
 
-
+	//释放链表内存
+	FreeSpace_LinkList(list);
 
 
 	system("pause");
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
