@@ -69,7 +69,28 @@ sudo EXTERNAL_URL="http://gitlab.example.com" yum -y install gitlab-ce
 
 
 
-	公司服务器地址：  git@192.168.1.179:PuSong/lab_ps_01.git
+	公司服务器地址：  git@192.168.1.179:PuSong/lab_ps_01.git   annotation : ssh登录 IP后面跟的是：不是/   ， http登录才是/
+ 
+ 
+  git@192.168.112.130/root/priv_slug_01.git    得换 ： git@192.168.1.178:root/priv_slug_01.git   用： http://192.168.1.178/root/priv_slug_01.git 
+  git@192.168.112.130/root/publ_slug_01.git    得换 ： git@192.168.1.178:root/publ_slug_01.git   用： http://192.168.1.178/root/publ_slug_01.git 
+ 
+ 
+ 用：  git@192.168.1.178:root/publ_slug_01.git   可以 
+ 
+ 
+  wh :   	https://blog.csdn.net/vtopqx/article/details/80883012  应该能设置权限
+ 
+ 
+ 
+ 经理发我： N_edition :      http://192.168.1.179/sunnychen/eps2016n.git  	用ssh:   	git@192.168.1.179:sunnychen/eps2016n.git
+ 
+ 
+ 
+  
+ 
+    http://192.168.1.179/sunnychen/lab_private_001.git    		git@192.168.1.179:sunnychen/lab_private_001.git
+ 
  
  
  
@@ -83,8 +104,7 @@ sudo EXTERNAL_URL="http://gitlab.example.com" yum -y install gitlab-ce
    
   
   
-  
-  
+
   
   
   
